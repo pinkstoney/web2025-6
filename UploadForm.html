@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Note</title>
+</head>
+<body>
+    <h1>Upload a New Note</h1>
+    <form id="uploadForm" action="/write" method="post" enctype="multipart/form-data">
+        <div>
+            <label for="note_name">Note Name:</label>
+            <input type="text" id="note_name" name="note_name" required>
+        </div>
+        <div>
+            <label for="note">Note Content:</label>
+            <textarea id="note" name="note" required></textarea>
+        </div>
+        <button type="submit">Upload Note</button>
+    </form>
+    
+    <div id="resultBox"></div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const resultBox = document.getElementById('resultBox');
+            
+            try {
+                const response = await fetch('/write', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.status === 201) {
+                    resultBox.textContent = 'Note created successfully!';
+                    this.reset();
+                } else {
+                    const errorText = await response.text();
+                    resultBox.textContent = `Error: ${errorText}`;
+                }
+            } catch (error) {
+                resultBox.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html> 
